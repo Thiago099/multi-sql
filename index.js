@@ -10,7 +10,7 @@ async function rodaQueries()
           const CONEXAO = mysql.createConnection({...require('./config.json').database, database: BANCOS[banco]});
           await new Promise( resolve => { CONEXAO.connect((erro) => {
             if(erro){
-              console.log('Não foi possível conectar');
+              console.log('Não foi possível conectar ao banco de dados: ' + BANCOS[banco]);
             }
             else{
           // use database
