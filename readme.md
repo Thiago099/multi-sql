@@ -8,3 +8,6 @@ npm install
 
 then you can run
 
+# developers
+
+[Thiago Kaique](https://github.com/Thiago099), [Igor Carvalho](https://github.com/Igorx8)
