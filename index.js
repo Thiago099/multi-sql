@@ -3,22 +3,17 @@ const mysql = require('mysql');
 async function rodaQueries()
 {
   const BANCOS = process.argv.splice(3);
-  const CONEXAO = mysql.createConnection(require('./config.json').database)
-      CONEXAO.connect((erro) => {
-      if(erro){
-        console.log('Não foi possível conectar');
-      }
-      else{
+  
+      
         //beguin transaction
         for(let banco in BANCOS){
-
-          // use database
-          CONEXAO.query(`USE ${BANCOS[banco]}`, (erro) => {
+          const CONEXAO = mysql.createConnection({...require('./config.json').database, database: BANCOS[banco]});
+          await new Promise( resolve => { CONEXAO.connect((erro) => {
             if(erro){
-              console.log(`Não foi possível conectar ao banco ${banco}`);
+              console.log('Não foi possível conectar');
             }
-            else
-            {
+            else{
+          // use database
               CONEXAO.query(process.argv[2], (erro, resultado) => {
                 if(erro){
                   console.log(banco + ': '+erro);
@@ -40,10 +35,11 @@ async function rodaQueries()
                 }
               })
             }
-          })
-        }
+            resolve()
+        })
+        })
       }
-    })
-  }
+}
+
 
   rodaQueries();
