@@ -15,6 +15,27 @@ const readFile = async (file) => {
     });
 };
 
+const { Transform } = require('stream');
+const { Console } = require('console');
+
+function table(input) {
+    // https://stackoverflow.com/a/67859384
+    const ts = new Transform({ transform(chunk, enc, cb) { cb(null, chunk) } })
+    const logger = new Console({ stdout: ts })
+    logger.table(input)
+    const table = (ts.read() || '').toString()
+    let result = '';
+    for (let row of table.split(/[\r\n]+/)) {
+      let r = row.replace(/[^┬]*┬/, '┌');
+      r = r.replace(/^├─*┼/, '├');
+      r = r.replace(/│[^│]*/, '');
+      r = r.replace(/^└─*┴/, '└');
+      r = r.replace(/'/g, ' ');
+      result += `${r}\n`;
+    }
+    console.log(result);
+  }
+
 const reset = "\x1b[0m"
 const bright = "\x1b[1m"
 const dim = "\x1b[2m"
@@ -86,7 +107,7 @@ async function main() {
                                       resolve(result.affectedRows)
                                   } else {
                                       console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found.${reset}`);
-                                      console.table(result);
+                                      table(result);
                                   }
                               }
                               
