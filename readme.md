@@ -25,7 +25,7 @@ multisql teste "SELECT * FROM tabla" banco1 banco2
 ```
 
 ```
-multisql teste file.sql banco1 banco2
+multisql file.sql banco1 banco2
 ```
 
 # developers
