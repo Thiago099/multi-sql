@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 
+// console colors source https://gist.github.com/abritinthebay/d80eb99b2726c83feb0d97eab95206c4
 const reset = "\x1b[0m"
 const bright = "\x1b[1m"
 const dim = "\x1b[2m"
