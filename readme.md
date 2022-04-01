@@ -10,7 +10,7 @@ npm install -g .
 then you can run
 
 ```
-npm run query "sql statments / sql file path" databases to run separed by space
+multiquery "sql statments / sql file path" databases to run separed by space
 ```
 
 # developers
