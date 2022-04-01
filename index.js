@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const mysql = require('mysql');
 const fs = require('fs');
+const { config } = require('process');
 
 const readFile = async (file) => {
     return new Promise((resolve, reject) => {
@@ -33,12 +34,27 @@ const white = "\x1b[37m"
 
 async function main() {
 
-    const DATABASES = process.argv.splice(3);
-    var queries = process.argv[2]
+    const config = require('./config.json');
+
+    // check if there is a preset argument
+    if(Object.keys(config).includes(process.argv[2]))
+    {
+      DATABASES = process.argv.splice(4)
+      queries = process.argv[3]
+      query_config = config[process.argv[2]]
+    }
+    else
+    {
+      DATABASES = process.argv.splice(3);
+      queries = process.argv[2]
+      query_config = config.localhost
+    }
+
     // check if queries is a file
     if (queries.trim().endsWith('.sql')) {
-        queries = await readFile(queries);
+      queries = await readFile(queries);
     }
+    
 
     queries = queries.split(';');
     
@@ -47,7 +63,7 @@ async function main() {
     //beguin transaction
     for (const DATABASE in DATABASES) {
         const CONEXAO = mysql.createConnection({
-            ...require('./config.json').server,
+            ...query_config,
             database: DATABASES[DATABASE]
         });
         await new Promise(resolve => {
