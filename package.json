@@ -7,7 +7,7 @@
     "mysql": "^2.18.1"
   },
   "bin":{
-    "multiquery": "./index.js"
+    "multisql": "./index.js"
   },
   "author": "",
   "license": "ISC"
