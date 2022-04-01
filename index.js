@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const mysql = require('mysql');
 const fs = require('fs');
 
