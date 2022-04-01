@@ -44,7 +44,7 @@ async function rodaQueries() {
                               if (erro) {
                                   console.log(`${cyan}${BANCOS[banco]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
                               } else {
-                                  // check if it is a select query
+                                  // check if it is not a select query
                                   if (resultado.constructor.name == 'OkPacket') {
                                       const plural = resultado.affectedRows != 1 ? 's' : '';
                                       console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.affectedRows} linha${plural} afetada${plural}${reset}`);
