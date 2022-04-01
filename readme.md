@@ -9,7 +9,7 @@ npm install
 then you can run
 
 ```
-npm run query "sql statment" databases to run separed by space
+npm run query "sql statment / sql file path" databases to run separed by space
 ```
 
 # developers
