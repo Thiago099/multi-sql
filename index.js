@@ -63,7 +63,7 @@ async function main() {
                       PROMISES.push(new Promise(resolve => {
                           CONEXAO.query(QUERY, (erro, result) => {
                               if (erro) {
-                                  console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
+                                  console.log(`${cyan}${DATABASES[DATABASE]}${reset}:\n${yellow}${QUERY}\n${red}${erro}${reset}\n`);
                               } else {
                                   if (result.constructor.name == 'OkPacket') {
                                       resolve(result.affectedRows)
