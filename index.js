@@ -25,13 +25,14 @@ async function rodaQueries() {
     //beguin transaction
     for (let banco in BANCOS) {
         const CONEXAO = mysql.createConnection({
-            ...require('./config.json').database,
+            ...require('./config.json').server,
             database: BANCOS[banco]
         });
         await new Promise(resolve => {
             CONEXAO.connect(async (erro) => {
                 if (erro) {
-                    console.log('Não foi possível conectar ao banco de dados: ' + BANCOS[banco]);
+                    console.log(`${red}Não foi possível conectar ao banco de dados: ${cyan}${BANCOS[banco]}${reset}`);
+                    resolve()
                 } else {
                     // use database
                     const PROMISES = []
@@ -40,7 +41,7 @@ async function rodaQueries() {
                       PROMISES.push(new Promise(resolve => {
                           CONEXAO.query(QUERY, (erro, resultado) => {
                               if (erro) {
-                                  console.log(`${cyan}${BANCOS[banco]}${reset}: ${red}${erro}${reset}`);
+                                  console.log(`${cyan}${BANCOS[banco]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
                               } else {
                                   // check if it is a query
                                   if (resultado.constructor.name == 'OkPacket') {
@@ -57,13 +58,14 @@ async function rodaQueries() {
                       }))
                     }
                     await Promise.all(PROMISES)
-                    if (banco == BANCOS.length - 1) {
-                      process.exit(0);
-                    }
+                    
                 }
                 resolve()
             })
         })
+        if (banco == BANCOS.length - 1) {
+          process.exit(0);
+        }
     }
 }
 rodaQueries();
