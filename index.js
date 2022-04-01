@@ -1,4 +1,17 @@
 const mysql = require('mysql');
+const fs = require('fs');
+
+const readFile = async (file) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(file, 'utf8', (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+};
 
 const reset = "\x1b[0m"
 const bright = "\x1b[1m"
@@ -17,40 +30,48 @@ const magenta = "\x1b[35m"
 const cyan = "\x1b[36m"
 const white = "\x1b[37m"
 
-async function rodaQueries() {
+async function main() {
 
-    const BANCOS = process.argv.splice(3);
-    const QUERIES = process.argv[2].split(';');
+    const DATABASES = process.argv.splice(3);
+    var queries = process.argv[2]
+    // check if queries is a file
+    if (queries.trim().endsWith('.sql')) {
+        queries = await readFile(queries);
+    }
+
+    queries = queries.split(';');
+    
+
 
     //beguin transaction
-    for (let banco in BANCOS) {
+    for (const DATABASE in DATABASES) {
         const CONEXAO = mysql.createConnection({
             ...require('./config.json').server,
-            database: BANCOS[banco]
+            database: DATABASES[DATABASE]
         });
         await new Promise(resolve => {
             CONEXAO.connect(async (erro) => {
                 if (erro) {
-                    console.log(`${red}Não foi possível conectar ao banco de dados: ${cyan}${BANCOS[banco]}${reset}`);
+                    console.log(`${red}Failed to connect to database: ${cyan}${DATABASES[DATABASE]}${reset}`);
                     resolve()
                 } else {
                     // use database
                     const PROMISES = []
-                    for(const QUERY of QUERIES)
+                    for(const QUERY of queries)
                     {
                       if(QUERY.trim() == '') continue;
                       PROMISES.push(new Promise(resolve => {
-                          CONEXAO.query(QUERY, (erro, resultado) => {
+                          CONEXAO.query(QUERY, (erro, result) => {
                               if (erro) {
-                                  console.log(`${cyan}${BANCOS[banco]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
+                                  console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
                               } else {
-                                  // check if it is not a select query
-                                  if (resultado.constructor.name == 'OkPacket') {
-                                      const plural = resultado.affectedRows != 1 ? 's' : '';
-                                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.affectedRows} linha${plural} afetada${plural}${reset}`);
+                                  // check if it is a not select query
+                                  if (result.constructor.name == 'OkPacket') {
+                                      const PLURAL = result.affectedRows != 1 ? 's' : '';
+                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.affectedRows} row${PLURAL} affected${reset}`);
                                   } else {
-                                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.length} linhas retornadas${reset}`);
-                                      console.table(resultado);
+                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} rows found${reset}`);
+                                      console.table(result);
                                   }
                               }
                               
@@ -64,9 +85,9 @@ async function rodaQueries() {
                 resolve()
             })
         })
-        if (banco == BANCOS.length - 1) {
+        if (DATABASE == DATABASES.length - 1) {
           process.exit(0);
         }
     }
 }
-rodaQueries();
+main();
