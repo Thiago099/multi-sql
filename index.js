@@ -81,9 +81,9 @@ async function main() {
                       }))
                     }
                     var affected = await Promise.all(PROMISES)
+                    affected = affected.filter(item => item != -1)
                     if(affected.length > 0)
                     {
-                      affected = affected.filter(item => item != -1)
                       console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${affected.reduce((a,b) => a + b, 0)} rows affected${reset}`);
                     }
                     
