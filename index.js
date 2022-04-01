@@ -69,7 +69,7 @@ async function main() {
         await new Promise(resolve => {
             CONEXAO.connect(async (erro) => {
                 if (erro) {
-                    console.log(`${red}Failed to connect to database: ${cyan}${DATABASES[DATABASE]}${reset}`);
+                    console.log(`${cyan}${DATABASES[DATABASE]}:${red} Failed to connect to database.${reset}`);
                     resolve()
                 } else {
                     // use database
@@ -80,12 +80,12 @@ async function main() {
                       PROMISES.push(new Promise(resolve => {
                           CONEXAO.query(QUERY, (erro, result) => {
                               if (erro) {
-                                  console.log(`${cyan}${DATABASES[DATABASE]}${reset}:\n${yellow}${QUERY}\n${red}${erro}${reset}\n`);
+                                  console.log(`${cyan}${DATABASES[DATABASE]}${reset}:\n${yellow}${QUERY}\n${red}${erro}.${reset}\n`);
                               } else {
                                   if (result.constructor.name == 'OkPacket') {
                                       resolve(result.affectedRows)
                                   } else {
-                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found${reset}`);
+                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found.${reset}`);
                                       console.table(result);
                                   }
                               }
@@ -99,7 +99,7 @@ async function main() {
                     if(affected.length > 0)
                     {
                       const ROWS = affected.reduce((a,b) => a + b, 0)
-                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected${reset}`);
+                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected.${reset}`);
                     }
                     
                 }
