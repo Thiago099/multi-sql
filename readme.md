@@ -4,6 +4,7 @@ run once:
 
 ```
 npm install 
+npm install -g .
 ```
 
 then you can run
