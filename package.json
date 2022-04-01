@@ -6,9 +6,6 @@
   "dependencies": {
     "mysql": "^2.18.1"
   },
-  "scripts": {
-    "multiquery": "node index.js"
-  },
   "bin":{
     "multiquery": "./index.js"
   },
