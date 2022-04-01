@@ -6,8 +6,8 @@
   "dependencies": {
     "mysql": "^2.18.1"
   },
-  "scripts": {
-    "query": "node index.js"
+  "bin":{
+    "multiquery": "./index.js"
   },
   "author": "",
   "license": "ISC"
