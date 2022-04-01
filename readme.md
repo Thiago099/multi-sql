@@ -24,6 +24,10 @@ multisql "SELECT * FROM tabla" banco1 banco2
 multisql teste "SELECT * FROM tabla" banco1 banco2
 ```
 
+```
+multisql teste file.sql banco1 banco2
+```
+
 # developers
 
 [Thiago Kaique](https://github.com/Thiago099), [Igor Carvalho](https://github.com/Igorx8)
