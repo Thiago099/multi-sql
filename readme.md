@@ -7,6 +7,25 @@ npm install
 npm install -g .
 ```
 
+[opitional set up your connections in the config.json]
+```
+{
+    "localhost":{
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "" 
+    },
+    "example":{
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "" 
+    }
+}
+```
+as in the example you can set your configs there so you can run commands in there over the command line
+
 then you can run
 
 ```
