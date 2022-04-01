@@ -65,13 +65,10 @@ async function main() {
                               if (erro) {
                                   console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${yellow}in "${QUERY}" ${red}${erro}${reset}`);
                               } else {
-                                  // check if it is a not select query
                                   if (result.constructor.name == 'OkPacket') {
                                       resolve(result.affectedRows)
-                                      // const PLURAL = result.affectedRows != 1 ? 's' : '';
-                                      // console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.affectedRows} row${PLURAL} affected${reset}`);
                                   } else {
-                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} rows found${reset}`);
+                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found${reset}`);
                                       console.table(result);
                                   }
                               }
@@ -84,7 +81,8 @@ async function main() {
                     affected = affected.filter(item => item != -1)
                     if(affected.length > 0)
                     {
-                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${affected.reduce((a,b) => a + b, 0)} rows affected${reset}`);
+                      const ROWS = affected.reduce((a,b) => a + b, 0)
+                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected${reset}`);
                     }
                     
                 }
