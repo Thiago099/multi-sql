@@ -40,7 +40,7 @@ multisql "SELECT * FROM tabla" banco1 banco2
 
 
 ```
-multisql teste "SELECT * FROM tabla" banco1 banco2
+multisql example "SELECT * FROM tabla" banco1 banco2
 ```
 
 ```
