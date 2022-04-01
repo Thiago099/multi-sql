@@ -10,7 +10,7 @@ npm install -g .
 then you can run
 
 ```
-multiquery [optional config name] "sql statments / sql file path" databases to run separed by space
+multiquery [optional config connection name] "sql statments / sql file path" databases to run separed by space
 ```
 
 # developers
