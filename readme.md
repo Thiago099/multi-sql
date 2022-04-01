@@ -1,4 +1,4 @@
-# run a single query on multiple databases
+# run a queries on multiple databases
 
 run once:
 
