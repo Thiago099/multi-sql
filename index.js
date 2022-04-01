@@ -67,19 +67,25 @@ async function main() {
                               } else {
                                   // check if it is a not select query
                                   if (result.constructor.name == 'OkPacket') {
-                                      const PLURAL = result.affectedRows != 1 ? 's' : '';
-                                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.affectedRows} row${PLURAL} affected${reset}`);
+                                      resolve(result.affectedRows)
+                                      // const PLURAL = result.affectedRows != 1 ? 's' : '';
+                                      // console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.affectedRows} row${PLURAL} affected${reset}`);
                                   } else {
                                       console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} rows found${reset}`);
                                       console.table(result);
                                   }
                               }
                               
-                              resolve();
+                              resolve(-1);
                           })
                       }))
                     }
-                    await Promise.all(PROMISES)
+                    var affected = await Promise.all(PROMISES)
+                    if(affected.length > 0)
+                    {
+                      affected = affected.filter(item => item != -1)
+                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${affected.reduce((a,b) => a + b, 0)} rows affected${reset}`);
+                    }
                     
                 }
                 resolve()
