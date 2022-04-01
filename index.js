@@ -38,6 +38,7 @@ async function rodaQueries() {
                     const PROMISES = []
                     for(const QUERY of QUERIES)
                     {
+                      if(QUERY.trim() == '') continue;
                       PROMISES.push(new Promise(resolve => {
                           CONEXAO.query(QUERY, (erro, resultado) => {
                               if (erro) {
