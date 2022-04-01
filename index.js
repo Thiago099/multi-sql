@@ -17,47 +17,53 @@ const magenta = "\x1b[35m"
 const cyan = "\x1b[36m"
 const white = "\x1b[37m"
 
-async function rodaQueries()
-{
-  const BANCOS = process.argv.splice(3);
-  
-      
-        //beguin transaction
-        for(let banco in BANCOS){
-          const CONEXAO = mysql.createConnection({...require('./config.json').database, database: BANCOS[banco]});
-          await new Promise( resolve => { CONEXAO.connect((erro) => {
-            if(erro){
-              console.log('Não foi possível conectar ao banco de dados: ' + BANCOS[banco]);
-            }
-            else{
-          // use database
-              CONEXAO.query(process.argv[2], (erro, resultado) => {
-                if(erro){
-                  console.log( `${cyan}${BANCOS[banco]}${reset}: ${red}${erro}${reset}`);
-                }
-                else{
-                  // check if it is a query
-                  if(resultado.constructor.name == 'OkPacket')
+async function rodaQueries() {
+
+    const BANCOS = process.argv.splice(3);
+    const QUERIES = process.argv[2].split(';');
+
+    //beguin transaction
+    for (let banco in BANCOS) {
+        const CONEXAO = mysql.createConnection({
+            ...require('./config.json').database,
+            database: BANCOS[banco]
+        });
+        await new Promise(resolve => {
+            CONEXAO.connect(async (erro) => {
+                if (erro) {
+                    console.log('Não foi possível conectar ao banco de dados: ' + BANCOS[banco]);
+                } else {
+                    // use database
+                    const PROMISES = []
+                    for(const QUERY of QUERIES)
                     {
-                      const plural = resultado.affectedRows != 1 ? 's' : '';
-                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.affectedRows} linha${plural} afetada${plural}${reset}`);
+                      PROMISES.push(new Promise(resolve => {
+                          CONEXAO.query(QUERY, (erro, resultado) => {
+                              if (erro) {
+                                  console.log(`${cyan}${BANCOS[banco]}${reset}: ${red}${erro}${reset}`);
+                              } else {
+                                  // check if it is a query
+                                  if (resultado.constructor.name == 'OkPacket') {
+                                      const plural = resultado.affectedRows != 1 ? 's' : '';
+                                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.affectedRows} linha${plural} afetada${plural}${reset}`);
+                                  } else {
+                                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.length} linhas retornadas${reset}`);
+                                      console.table(resultado);
+                                  }
+                              }
+                              
+                              resolve();
+                          })
+                      }))
                     }
-                    else
-                    {
-                      console.log(`${cyan}${BANCOS[banco]}${reset}: ${green}Sucesso, ${resultado.length} linhas retornadas${reset}`);
-                      console.table(resultado);
+                    await Promise.all(PROMISES)
+                    if (banco == BANCOS.length - 1) {
+                      process.exit(0);
                     }
                 }
-                if(banco == BANCOS.length - 1){
-                  process.exit(0);
-                }
-              })
-            }
-            resolve()
+                resolve()
+            })
         })
-        })
-      }
+    }
 }
-
-
-  rodaQueries();
+rodaQueries();
