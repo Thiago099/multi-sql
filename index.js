@@ -1,57 +1,17 @@
 #!/usr/bin/env node
 const mysql = require('mysql');
-const fs = require('fs');
-const { config } = require('process');
 
-const readFile = async (file) => {
-    return new Promise((resolve, reject) => {
-        fs.readFile(file, 'utf8', (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-};
+const { read_file } = require('./bin/io.js');
 
-const { Transform } = require('stream');
-const { Console } = require('console');
+const 
+{
+    table,
 
-function table(input) {
-    // https://stackoverflow.com/a/67859384
-    const ts = new Transform({ transform(chunk, enc, cb) { cb(null, chunk) } })
-    const logger = new Console({ stdout: ts })
-    logger.table(input)
-    const table = (ts.read() || '').toString()
-    let result = '';
-    for (let row of table.split(/[\r\n]+/)) {
-      let r = row.replace(/[^┬]*┬/, '┌');
-      r = r.replace(/^├─*┼/, '├');
-      r = r.replace(/│[^│]*/, '');
-      r = r.replace(/^└─*┴/, '└');
-      r = r.replace(/'/g, ' ');
-      result += `${r}\n`;
-    }
-    console.log(result);
-  }
+    reset, bright, dim, underscore, blink, reverse, hidden,
 
-const reset = "\x1b[0m"
-const bright = "\x1b[1m"
-const dim = "\x1b[2m"
-const underscore = "\x1b[4m"
-const blink = "\x1b[5m"
-const reverse = "\x1b[7m"
-const hidden = "\x1b[8m"
-
-const black = "\x1b[30m"
-const red = "\x1b[31m"
-const green = "\x1b[32m"
-const yellow = "\x1b[33m"
-const blue = "\x1b[34m"
-const magenta = "\x1b[35m"
-const cyan = "\x1b[36m"
-const white = "\x1b[37m"
+    black, red, green, yellow, blue, magenta, cyan, white
+    
+} = require('./bin/console.js');
 
 async function main() {
 
@@ -73,7 +33,7 @@ async function main() {
 
     // check if queries is a file
     if (queries.trim().endsWith('.sql')) {
-      queries = await readFile(queries);
+      queries = await read_file(queries);
     }
     
 
