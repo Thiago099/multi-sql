@@ -83,29 +83,33 @@ async function main() {
 
     //beguin transaction
     for (const DATABASE in DATABASES) {
-        const CONEXAO = mysql.createConnection({
+        const CONNECTION = mysql.createConnection({
             ...query_config,
             database: DATABASES[DATABASE]
         });
         await new Promise(resolve => {
-            CONEXAO.connect(async (erro) => {
+            CONNECTION.connect(async (erro) => {
                 if (erro) {
+                    // connection error message
                     console.log(`${cyan}${DATABASES[DATABASE]}:${red} Failed to connect to database.${reset}`);
                     resolve()
                 } else {
-                    // use database
+                    // disable foreign keys for async query
+                    await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', (result) => {resolve()}))
                     const PROMISES = []
                     for(const QUERY of queries)
                     {
                       if(QUERY.trim() == '') continue;
                       PROMISES.push(new Promise(resolve => {
-                          CONEXAO.query(QUERY, (erro, result) => {
+                          CONNECTION.query(QUERY, (erro, result) => {
                               if (erro) {
+                                  // query error message
                                   console.log(`${cyan}${DATABASES[DATABASE]}${reset}:\n${yellow}${QUERY}\n${red}${erro}.${reset}\n`);
                               } else {
                                   if (result.constructor.name == 'OkPacket') {
                                       resolve(result.affectedRows)
                                   } else {
+                                      // query result message
                                       console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found.${reset}`);
                                       table(result);
                                   }
@@ -119,8 +123,9 @@ async function main() {
                     affected = affected.filter(item => item != -1)
                     if(affected.length > 0)
                     {
-                      const ROWS = affected.reduce((a,b) => a + b, 0)
-                      console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected.${reset}`);
+                        // query success message
+                        const ROWS = affected.reduce((a,b) => a + b, 0)
+                        console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected.${reset}`);
                     }
                     
                 }
