@@ -95,7 +95,7 @@ async function main() {
                     resolve()
                 } else {
                     // disable foreign keys for async query
-                    await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', (result) => {resolve()}))
+                    await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', () => {resolve()}))
                     const PROMISES = []
                     for(const QUERY of queries)
                     {
@@ -111,7 +111,7 @@ async function main() {
                                   } else {
                                       // query result message
                                       console.log(`${cyan}${DATABASES[DATABASE]}${reset}: ${green}Success, ${result.length} row${result.length == 1?'':'s'} found.${reset}`);
-                                      table(result);
+                                      if(result.length > 0) table(result);
                                   }
                               }
                               
