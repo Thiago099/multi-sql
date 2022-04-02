@@ -10,11 +10,11 @@ const
     reset, bright, dim, underscore, blink, reverse, hidden,
 
     black, red, green, yellow, blue, magenta, cyan, white
-    
+
 } = require('./bin/console.js');
 
-async function main() {
-
+async function process_arguments()
+{
     const config = require('./config.json');
 
     // check if there is a preset argument
@@ -35,16 +35,19 @@ async function main() {
     if (queries.trim().endsWith('.sql')) {
       queries = await read_file(queries);
     }
-    
 
     queries = queries.split(';');
-    
+    return {QUERIES:queries, QUERIES_CONFIG:query_config, DATABASES}
+}
 
+async function main() {
+
+    const { QUERIES, QUERIES_CONFIG, DATABASES } = await process_arguments()
 
     //beguin transaction
     for (const DATABASE in DATABASES) {
         const CONNECTION = mysql.createConnection({
-            ...query_config,
+            ...QUERIES_CONFIG,
             database: DATABASES[DATABASE]
         });
         await new Promise(resolve => {
@@ -57,7 +60,7 @@ async function main() {
                     // disable foreign keys for async query
                     await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', () => {resolve()}))
                     const PROMISES = []
-                    for(const QUERY of queries)
+                    for(const QUERY of QUERIES)
                     {
                       if(QUERY.trim() == '') continue;
                       PROMISES.push(new Promise(resolve => {
