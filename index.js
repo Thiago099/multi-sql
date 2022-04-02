@@ -59,12 +59,12 @@ async function main() {
                     resolve()
                 } else {
                     // disable foreign keys for async query
-                    await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', () => {resolve()}))
-                    const PROMISES = []
+                    // await new Promise(resolve => CONNECTION.query('SET foreign_key_checks = 0', () => {resolve()}))
+                    const AFFECTED = []
                     for(const QUERY of QUERIES)
                     {
                       if(QUERY.trim() == '') continue;
-                      PROMISES.push(new Promise(resolve => {
+                      const CURRENT_AFFECTED = await (new Promise(resolve => {
                           CONNECTION.query(QUERY, (erro, result) => {
                               if (erro) {
                                   // query error message
@@ -82,13 +82,12 @@ async function main() {
                               resolve(-1);
                           })
                       }))
+                      if(CURRENT_AFFECTED != -1) AFFECTED.push(CURRENT_AFFECTED)
                     }
-                    var affected = await Promise.all(PROMISES)
-                    affected = affected.filter(item => item != -1)
-                    if(affected.length > 0)
+                    if(AFFECTED.length > 0)
                     {
                         // query success message
-                        const ROWS = affected.reduce((a,b) => a + b, 0)
+                        const ROWS = AFFECTED.reduce((a,b) => a + b, 0)
                         console.log(`${cyan}${DATABASE}${reset}: ${green}Success, ${ROWS} row${ROWS == 1 ? '' : 's'} affected.${reset}`);
                     }
                     
