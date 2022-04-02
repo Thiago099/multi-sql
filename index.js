@@ -15,20 +15,20 @@ const
 
 async function process_arguments()
 {
-    const config = require('./config.json');
+    const CONFIG = require('./config.json');
 
     // check if there is a preset argument
-    if(Object.keys(config).includes(process.argv[2]))
+    if(Object.keys(CONFIG).includes(process.argv[2]))
     {
       DATABASES = process.argv.splice(4)
       queries = process.argv[3]
-      query_config = config[process.argv[2]]
+      SELECTED_CONFIG = CONFIG[process.argv[2]]
     }
     else
     {
       DATABASES = process.argv.splice(3);
       queries = process.argv[2]
-      query_config = config.localhost
+      SELECTED_CONFIG = CONFIG.localhost
     }
 
     // check if queries is a file
@@ -38,17 +38,17 @@ async function process_arguments()
 
     queries = queries.split(';');
     
-    return {QUERIES:queries, QUERIES_CONFIG:query_config, DATABASES}
+    return {QUERIES:queries, CONFIG:SELECTED_CONFIG, DATABASES}
 }
 
 async function main() {
 
-    const { QUERIES, QUERIES_CONFIG, DATABASES } = await process_arguments()
+    const { QUERIES, CONFIG, DATABASES } = await process_arguments()
 
     //beguin transaction
     for (const DATABASE of DATABASES) {
         const CONNECTION = mysql.createConnection({
-            ...QUERIES_CONFIG,
+            ...CONFIG,
             database: DATABASE
         });
         await new Promise(resolve => {
